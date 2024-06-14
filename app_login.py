@@ -57,7 +57,7 @@ stop_event = Event()
 def start_scp_server(token, client_id, branch_id, user_id):
     try:
         # Run the test.py script as an executable
-        subprocess.run([sys.executable, "test.py", token, client_id, branch_id, user_id])
+        subprocess.run([sys.executable, "test_concurrency.py", token, client_id, branch_id, user_id])
     except Exception as e:
         logging.error(f"Failed to start SCP server: {e}")
 

@@ -34,7 +34,7 @@ class FileHandler(FileSystemEventHandler):
             # Read the DICOM file
             dicom_data = pydicom.dcmread(file_path)
             study_instance_uid = dicom_data.StudyInstanceUID
-
+            
             # Create directory for StudyInstanceUID if it doesn't exist
             study_dir = os.path.join(self.output_dir, study_instance_uid)
             if not os.path.exists(study_dir):
@@ -94,6 +94,7 @@ class FileHandler(FileSystemEventHandler):
                 response_create_patient = self.create_patient(gender, dob, patient_name, patient_id)
                 print(response_create_patient.get("patient_id"))
                 pat_id= response_create_patient.get("patient_id")
+                
                 response_create_patient_report = self.create_patient_report( pat_id, instance_id, study_id)
             else:
                 print(f"Failed to get the patient level information, Status code: {response.status_code}, {response.json()}")
@@ -118,11 +119,14 @@ class FileHandler(FileSystemEventHandler):
                 'Content-Type': 'application/json',
                 'token': self.token
             }
-            response = requests.post('https://dev-api.smaro.app/api/patient/create', 
+            response = requests.post('https://dev-api.smaro.app/api/app/patient/create', 
                                      json=patient_data, headers=headers, verify = False)
             print(response.json())
             print(response.json()['data']['insertId'])
             if response.status_code == 200:
+                print("create patient succesfull")
+                return {"success": True,"patient_id":response.json()['data']['insertId']}
+            elif response.status_code == 409:
                 print("create patient succesfull")
                 return {"success": True,"patient_id":response.json()['data']['insertId']}
             else:
